@@ -14,14 +14,24 @@
 clear; clc; close all;
 
 MU1 = [1 2];
-SIGMA1 = [2 0; 0 .5];
+SIGMA1 = [2 0; 
+          0 .5];
+
 MU2 = [-3 -5];
-SIGMA2 = [1 0; 0 1];
-X = [mvnrnd(MU1,SIGMA1,1000);mvnrnd(MU2,SIGMA2,1000)];
-scatter(X(:,1),X(:,2),10,'.')
+SIGMA2 = [1 0; 
+          0 1];
+
+MU3 = [3 -3];
+SIGMA3 = [0.7 0; 
+          0 2.1];
+
+X = [mvnrnd(MU1,SIGMA1,1000);
+     mvnrnd(MU2,SIGMA2,1000);
+     mvnrnd(MU3,SIGMA3,1000)];
+scatter(X(:,1), X(:,2), 10, '.')
 hold on
 
-K = 2;
+K = 3;
 [N, D] = size(X);
 model = [];
 
@@ -57,41 +67,6 @@ for i = 1:n_iter
     
     fprintf('iter %d: p(x) = %f, delta = %f\n', i, likelihood, delta);
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

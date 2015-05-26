@@ -40,3 +40,7 @@ function log_prob = log_gaussian_density(X, model)
         log_prob(:, k) = -0.5 * (X_mu_l2 + D*log(2*pi) + log_det_sigma);
     end
 end
+
+
+
+
