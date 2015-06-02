@@ -1,47 +1,31 @@
-% fitgmdist()
-% N = sample num
-% D = dimension
-% K = component num
+function model = gmm( X, K )
+% Gaussian Mixture Models via EM algorithm
+%   N = sample num
+%   D = dimension
+%   K = component num
+%   X = [N x D]
+%
+%   Model: return GMM model including following parameters
+%           Mu = [K x D]
+%           Sigma = [D x D x K]
+%           Weights = [1 x K]
+%
+%   Reference: https://github.com/Mrliukuang/scikit-learn/blob/master/sklearn/mixture/gmm.py
+%              fitgmdist()
 
-% X = [N x D]
-% Model:
-%   Mu = [K x D]
-%   Sigma = [D x D x K]
-%   Weights = [1 x K]
-% Ref:
-%   https://github.com/Mrliukuang/scikit-learn/blob/master/sklearn/mixture/gmm.py
-%   fitgmdist()
-clear; clc; close all;
-
-MU1 = [1 2];
-SIGMA1 = [2 0; 
-          0 .5];
-
-MU2 = [-3 -5];
-SIGMA2 = [1 0; 
-          0 1];
-
-MU3 = [3 -3];
-SIGMA3 = [0.7 0; 
-          0 2.1];
-
-X = [mvnrnd(MU1,SIGMA1,1000);
-     mvnrnd(MU2,SIGMA2,1000);
-     mvnrnd(MU3,SIGMA3,1000)];
-scatter(X(:,1), X(:,2), 10, '.')
-hold on
-
-K = 3;
 [N, D] = size(X);
 model = [];
 
+
 %% Initialization step
-[~, model.Mu] = kmeans(X, K);
+% [~, model.Mu] = kmeans(X, K);
+model.Mu = X(randsample(N, K), :);  % Use random-sample instead of kmeans
 model.Weights = ones(1, K) ./ K;
 
 min_covar = 1e-3;   %  Floor on the diagonal of the covariance matrix to prevent overfitting.  Defaults to 1e-3.
 cv = cov(X) + min_covar * eye(D);
 model.Sigma = repmat(cv, [1, 1, K]);
+
 
 %% EM algorithm
 n_iter = 100;
@@ -65,7 +49,7 @@ for i = 1:n_iter
     % M step: update params
     model = m_step(X, resp);
     
-    fprintf('iter %d: p(x) = %f, delta = %f\n', i, likelihood, delta);
+    fprintf('iter %d: p(x) = %f, delta = %f\n', i, likelihood, delta)
 end
 
 
