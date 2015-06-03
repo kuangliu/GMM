@@ -5,9 +5,19 @@ function [logpx, resp] = e_step(X, model)
 
 pxk = log_gaussian_density(X, model);   % logp(x|k) = logN(x|mu,sigma)
 lpr = bsxfun(@plus, pxk, log(model.Weights));    % lpr = logp(x|k) + logp(k)
+%% 1. My method works as the same
 logpx = log(sum(exp(lpr), 2));          % logp(x) = logsum(p(x|k)p(k)) = logsumexp(lpr)
 resp = bsxfun(@minus, lpr, logpx);      % responsibility = logp(k|x) = logp(x|k)+logp(k)-logp(x)
 resp = exp(resp);                       % calculate p(k|x)
+
+%% 2. Method from Matlab2015
+% maxll = max(lpr, [], 2);
+% % minus maxll to avoid underflow
+% resp = exp(bsxfun(@minus, lpr, maxll));
+% density = sum(resp, 2);
+% % normalize posteriors
+% resp = bsxfun(@rdivide, resp, density);
+% logpx = log(density) + maxll;
 
 
 function log_prob = log_gaussian_density(X, model)
@@ -26,7 +36,7 @@ min_cov = 1e-7;
 for k = 1:K
     % logDetSigma = log(det(Sigma(:,:,k)));
     % Maybe "Cholesky decomposition" is more stable.
-    % Try 'cholcov' especially for covariance matrix.
+    % Try 'cholcov' specially for covariance matrix.
     L = chol(Sigma(:,:,k) + min_cov*eye(D));     % sigma = L' * L
     diagL = diag(L);
     log_det_sigma = 2*sum(log(diagL));
@@ -37,4 +47,5 @@ for k = 1:K
     
     log_prob(:, k) = -0.5 * (quadform + D*log(2*pi) + log_det_sigma);
 end
+
 

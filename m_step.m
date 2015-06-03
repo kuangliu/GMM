@@ -12,7 +12,7 @@ D = size(X, 2);
 %     model.Mu = bsxfun(@rdivide, respX, weights');
 
 % update Mu & Sigma
-min_cov = 1e-3;
+min_cov = 0;    % NOTICE. This affects Weights seriously! Try 1e-3 instead of 0.
 for k = 1:K
     post = resp(:, k);
     model.Mu(k, :) = post' * X / weights(k);

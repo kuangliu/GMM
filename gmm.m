@@ -1,4 +1,4 @@
-function model = gmm( X, K )
+function model = gmm(X, K)
 % Gaussian Mixture Models via EM algorithm
 %   N = sample num
 %   D = dimension
@@ -28,15 +28,15 @@ model.Sigma = repmat(cv, [1, 1, K]);
 
 
 %% EM algorithm
-n_iter = 100;
+max_iter = 100;
 model.Converged = false;
 tol = 1e-6;   % Tolerance. EM iterations will stop when average gain in log-likelihood meet this tolerance.
 pre_likelihood = -Inf;
 
-for i = 1:n_iter
+for i = 1:max_iter
     % E step: calculating responsibility in log form
     [logpx, resp] = e_step(X, model);
-    likelihood = mean(logpx);
+    likelihood = sum(logpx);
     
     % Convergence check
     delta = likelihood - pre_likelihood;
